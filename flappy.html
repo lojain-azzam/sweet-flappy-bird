@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Sweet Flappy Bird - Queen's Adventure 🌸</title>
+    <style>
+        /* 
+         * Sweet Flappy Bird Game - Created with AI Assistant
+         * 
+         * ORIGINAL PROMPT USED TO GENERATE THIS CODE:
+         * "Please generate the full code for a fun, clean, and uniquely styled Flappy Bird game 
+         * inside a single .html file with feminine soft theme, pastel colors, pink background, 
+         * cute bird with bow, heart trails, sweet-themed pipes, heart score counter, 
+         * encouraging messages, and optional sound effects"
+         * 
+         * ADDITIONAL ENHANCEMENTS REQUESTED:
+         * 1. After every 2 points, change the background color gradually (e.g. from light pink to a deeper pink, or to a sky gradient)
+         * 2. Add signature at the bottom corner: "Designed by Lujain Azzam ©"
+         * 3. Extra feminine and unique features for a soft, fun, and personal touch
+         * 
+         * Features: Pastel theme, cute animations, heart trails, sweet pipes, encouraging messages,
+         * dynamic background changes, level progression system, achievement popups, designer signature
+         */
+        
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #FFE5F1 0%, #FFF0F5 25%, #F8E8FF 50%, #E6F3FF 75%, #F0F8FF 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: background 1s ease-in-out;
+        }
+
+        /* Floating hearts and stars background */
+        body::before {
+            content: '💕';
+            position: absolute;
+            font-size: 20px;
+            animation: floatHeart 8s infinite linear;
+            opacity: 0.3;
+            top: 10%;
+            left: 10%;
+        }
+
+        body::after {
+            content: '✨';
+            position: absolute;
+            font-size: 24px;
+            animation: floatHeart 12s infinite linear reverse;
+            opacity: 0.4;
+            top: 20%;
+            right: 15%;
+        }
+
+        /* Additional floating elements */
+        .bg-heart1 {
+            position: absolute;
+            font-size: 18px;
+            animation: blinkHeart 3s infinite ease-in-out;
+            opacity: 0.6;
+            top: 15%;
+            left: 25%;
+        }
+
+        .bg-heart2 {
+            position: absolute;
+            font-size: 22px;
+            animation: blinkHeart 4s infinite ease-in-out 1s;
+            opacity: 0.5;
+            top: 35%;
+            right: 25%;
+        }
+
+        .bg-heart3 {
+            position: absolute;
+            font-size: 16px;
+            animation: blinkHeart 5s infinite ease-in-out 2s;
+            opacity: 0.7;
+            top: 60%;
+            left: 15%;
+        }
+
+        .bg-star1 {
+            position: absolute;
+            font-size: 20px;
+            animation: twinkleStar 6s infinite ease-in-out;
+            opacity: 0.6;
+            top: 25%;
+            left: 60%;
+        }
+
+        .bg-star2 {
+            position: absolute;
+            font-size: 24px;
+            animation: twinkleStar 7s infinite ease-in-out 1.5s;
+            opacity: 0.5;
+            top: 45%;
+            right: 10%;
+        }
+
+        .bg-star3 {
+            position: absolute;
+            font-size: 18px;
+            animation: twinkleStar 5s infinite ease-in-out 3s;
+            opacity: 0.7;
+            top: 70%;
+            left: 40%;
+        }
+
+        .bg-star4 {
+            position: absolute;
+            font-size: 22px;
+            animation: twinkleStar 8s infinite ease-in-out 0.5s;
+            opacity: 0.4;
+            top: 80%;
+            right: 30%;
+        }
+
+        .bg-heart4 {
+            position: absolute;
+            font-size: 20px;
+            animation: blinkHeart 4.5s infinite ease-in-out 2.5s;
+            opacity: 0.6;
+            top: 85%;
+            left: 70%;
+        }
+
+        .bg-star5 {
+            position: absolute;
+            font-size: 19px;
+            animation: twinkleStar 6.5s infinite ease-in-out 1s;
+            opacity: 0.5;
+            top: 5%;
+            left: 80%;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        @keyframes blinkHeart {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        @keyframes twinkleStar {
+            0%, 100% { opacity: 0.4; transform: scale(1) rotate(0deg); }
+            25% { opacity: 0.8; transform: scale(1.3) rotate(90deg); }
+            50% { opacity: 0.6; transform: scale(1.1) rotate(180deg); }
+            75% { opacity: 0.9; transform: scale(1.4) rotate(270deg); }
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 600px;
+            height: 800px;
+            background: linear-gradient(to bottom, #FFE5F1 0%, #FFF0F5 50%, #F8E8FF 100%);
+            border: 4px solid #FFB6C1;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
+        }
+
+        #bird {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, #FFD1DC 30%, #FFB6C1 70%);
+            border-radius: 50%;
+            left: 80px;
+            top: 300px;
+            z-index: 10;
+            transition: transform 0.1s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Bird's eye */
+        #bird::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #4A4A4A;
+            border-radius: 50%;
+            top: 10px;
+            left: 10px;
+            box-shadow: 0 0 4px rgba(255,255,255,0.8);
+        }
+
+        /* Bird's beak */
+        #bird::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 8px;
+            background: #FFA07A;
+            border-radius: 50%;
+            top: 18px;
+            left: 28px;
+            transform: rotate(-15deg);
+        }
+
+        /* Cute bow on bird */
+        .bow {
+            position: absolute;
+            width: 20px;
+            height: 12px;
+            background: #FF69B4;
+            border-radius: 50%;
+            top: 5px;
+            left: 15px;
+            z-index: 11;
+        }
+
+        .bow::before {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #FF1493;
+            border-radius: 50%;
+            top: 3px;
+            left: 7px;
+        }
+
+        /* Heart trail particles */
+        .heart-trail {
+            position: absolute;
+            font-size: 12px;
+            color: #FF69B4;
+            pointer-events: none;
+            animation: fadeHeart 1s ease-out forwards;
+            z-index: 5;
+        }
+
+        @keyframes fadeHeart {
+            0% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0px);
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(0.5) translateY(-20px);
+            }
+        }
+
+        /* Sweet-themed pipes (candy canes) */
+        .pipe {
+            position: absolute;
+            width: 70px;
+            background: linear-gradient(45deg, #FFB6C1 25%, #FFC0CB 25%, #FFC0CB 50%, #FFB6C1 50%, #FFB6C1 75%, #FFC0CB 75%);
+            background-size: 20px 20px;
+            border: 3px solid #FF69B4;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
+        }
+
+        .pipe.top {
+            top: 0;
+            border-bottom: none;
+        }
+
+        .pipe.bottom {
+            bottom: 0;
+            border-top: none;
+        }
+
+        /* Candy pipe caps */
+        .pipe::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 25px;
+            background: linear-gradient(45deg, #FF69B4 25%, #FF1493 25%, #FF1493 50%, #FF69B4 50%, #FF69B4 75%, #FF1493 75%);
+            background-size: 15px 15px;
+            border: 3px solid #FF1493;
+            border-radius: 15px;
+        }
+
+        .pipe.top::before {
+            bottom: -3px;
+            left: -10px;
+        }
+
+        .pipe.bottom::before {
+            top: -3px;
+            left: -10px;
+        }
+
+        /* Heart-shaped score counter */
+        #score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #FF1493;
+            text-shadow: 2px 2px 4px rgba(255, 20, 147, 0.3);
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #FFB6C1;
+            box-shadow: 0 4px 8px rgba(255, 182, 193, 0.4);
+        }
+
+        #score::before {
+            content: '💖';
+            position: absolute;
+            font-size: 16px;
+            top: -8px;
+            left: -8px;
+        }
+
+        /* Encouraging game over screen */
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #FF69B4;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            display: none;
+            z-index: 30;
+            border: 3px solid #FFB6C1;
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
+            font-family: 'Dancing Script', cursive;
+        }
+
+        #gameOver h2 {
+            margin-bottom: 15px;
+            color: #FF1493;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        #gameOver p {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #FF69B4;
+        }
+
+        #gameOver button {
+            background: linear-gradient(45deg, #FF69B4, #FF1493);
+            border: none;
+            padding: 15px 25px;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        #gameOver button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        /* Sweet start screen */
+        #startScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #FF69B4;
+            z-index: 25;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 25px;
+            border: 3px solid #FFB6C1;
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
+        }
+
+        #startScreen h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #FF1493;
+            text-shadow: 2px 2px 4px rgba(255, 20, 147, 0.3);
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+        }
+
+        #startScreen p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #FF69B4;
+            font-weight: 500;
+        }
+
+        #startScreen button {
+            background: linear-gradient(45deg, #FFB6C1, #FF69B4);
+            border: none;
+            padding: 18px 35px;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        #startScreen button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.5);
+        }
+
+        /* Floating sparkles */
+        .sparkle {
+            position: absolute;
+            font-size: 16px;
+            animation: sparkle 4s infinite linear;
+            opacity: 0.6;
+        }
+
+        .sparkle1 { top: 80px; animation-delay: 0s; }
+        .sparkle2 { top: 150px; animation-delay: -2s; }
+        .sparkle3 { top: 220px; animation-delay: -1s; }
+
+                 @keyframes sparkle {
+             0% { left: -50px; transform: rotate(0deg); }
+             100% { left: 650px; transform: rotate(360deg); }
+         }
+
+        /* Bird animations */
+        .flap {
+            animation: flap 0.4s ease-out;
+        }
+
+        @keyframes flap {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(-20deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        .fall {
+            animation: fall 0.8s ease-in;
+        }
+
+        @keyframes fall {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(90deg); }
+        }
+
+        /* Sound toggle button */
+        #soundToggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #FFB6C1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 20;
+            transition: all 0.3s;
+        }
+
+        #soundToggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 182, 193, 0.2);
+        }
+
+        /* Designer signature */
+        #signature {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 16px;
+            color: #FF69B4;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 2px solid #FFB6C1;
+            box-shadow: 0 4px 8px rgba(255, 182, 193, 0.3);
+            z-index: 25;
+            transition: all 0.3s;
+        }
+
+        #signature:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(255, 182, 193, 0.4);
+        }
+
+        /* Level indicator */
+        #levelIndicator {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #FFB6C1;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FF69B4;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        /* Achievement popup */
+        .achievement {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #FFB6C1, #FF69B4);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            z-index: 40;
+            opacity: 0;
+            transition: all 0.5s;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.4);
+        }
+
+        .achievement.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="score">0</div>
+        <div id="soundToggle" onclick="toggleSound()">🔊</div>
+        <div id="levelIndicator">Level 1 🌸</div>
+        
+        <div id="startScreen">
+            <h1>🌸 Sweet Flappy Bird 🌸</h1>
+            <p>Click or press SPACE to flap your wings! 💕</p>
+            <button onclick="startGame()">Start Your Adventure ✨</button>
+        </div>
+
+        <div id="gameOver">
+            <h2 id="gameOverMessage">Nice try, queen 👑</h2>
+            <p>Final Score: <span id="finalScore">0</span> 💖</p>
+            <button onclick="restartGame()">Fly Again! 🦋</button>
+        </div>
+
+        <div id="bird">
+            <div class="bow"></div>
+        </div>
+        
+        <div class="sparkle sparkle1">✨</div>
+        <div class="sparkle sparkle2">💫</div>
+        <div class="sparkle sparkle3">⭐</div>
+    </div>
+
+    <div id="signature">Designed by Lujain Azzam ©</div>
+
+    <!-- Background floating elements -->
+    <div class="bg-heart1">💕</div>
+    <div class="bg-heart2">💖</div>
+    <div class="bg-heart3">💗</div>
+    <div class="bg-heart4">💝</div>
+    <div class="bg-star1">⭐</div>
+    <div class="bg-star2">✨</div>
+    <div class="bg-star3">💫</div>
+    <div class="bg-star4">🌟</div>
+    <div class="bg-star5">⭐</div>
+
+    <script>
+        // Game variables
+        let bird = document.getElementById('bird');
+        let gameContainer = document.getElementById('gameContainer');
+        let scoreElement = document.getElementById('score');
+        let gameOverScreen = document.getElementById('gameOver');
+        let startScreen = document.getElementById('startScreen');
+        let finalScoreElement = document.getElementById('finalScore');
+        let gameOverMessage = document.getElementById('gameOverMessage');
+        let soundToggle = document.getElementById('soundToggle');
+
+        let birdY = 300;
+        let birdVelocity = 0;
+        let gravity = 0.4;
+        let jumpPower = -8;
+        let gameRunning = false;
+        let score = 0;
+        let pipes = [];
+        let pipeSpeed = 1.8;
+        let pipeGap = 160;
+        let pipeWidth = 70;
+        let gameContainerWidth = 600;
+        let gameContainerHeight = 800;
+        let soundEnabled = true;
+        let heartTrails = [];
+        let currentLevel = 1;
+        let lastLevelChange = 0;
+
+        // Background color themes for different levels
+        const backgroundThemes = [
+            "linear-gradient(135deg, #FFE5F1 0%, #FFF0F5 25%, #F8E8FF 50%, #E6F3FF 75%, #F0F8FF 100%)", // Level 1 - Soft Pink
+            "linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 25%, #FFE4E1 50%, #FFF0F5 75%, #F8E8FF 100%)", // Level 2 - Deeper Pink
+            "linear-gradient(135deg, #87CEEB 0%, #B0E0E6 25%, #E0F6FF 50%, #F0F8FF 75%, #E6F3FF 100%)", // Level 3 - Sky Blue
+            "linear-gradient(135deg, #DDA0DD 0%, #E6E6FA 25%, #F8E8FF 50%, #FFF0F5 75%, #FFE5F1 100%)", // Level 4 - Lavender
+            "linear-gradient(135deg, #98FB98 0%, #F0FFF0 25%, #E0F6FF 50%, #F0F8FF 75%, #E6F3FF 100%)", // Level 5 - Mint Green
+            "linear-gradient(135deg, #FFA07A 0%, #FFB6C1 25%, #FFE4E1 50%, #FFF0F5 75%, #F8E8FF 100%)", // Level 6 - Peach
+            "linear-gradient(135deg, #D8BFD8 0%, #E6E6FA 25%, #F8E8FF 50%, #FFF0F5 75%, #FFE5F1 100%)", // Level 7 - Thistle
+            "linear-gradient(135deg, #F0E68C 0%, #FFFACD 25%, #FFF0F5 50%, #F8E8FF 75%, #E6F3FF 100%)"  // Level 8 - Golden
+        ];
+
+        // Level names and achievements
+        const levelNames = [
+            "🌸 Sweet Beginner",
+            "💕 Pink Dreamer", 
+            "🌤️ Sky Explorer",
+            "💜 Lavender Magic",
+            "🌿 Mint Fresh",
+            "🍑 Peach Paradise",
+            "🌺 Thistle Queen",
+            "✨ Golden Goddess"
+        ];
+
+        // Encouraging messages for game over
+        const encouragingMessages = [
+            "Nice try, queen 👑",
+            "You're flying high! 💕",
+            "Almost there, beautiful! ✨",
+            "You're doing amazing! 🌸",
+            "Keep soaring, sweetie! 🦋",
+            "You've got this, darling! 💖"
+        ];
+
+        // Audio elements (optional - will work if user interacts)
+        let jumpSound, hitSound, scoreSound;
+
+        // Initialize audio
+        function initAudio() {
+            // Create simple beep sounds using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function createBeep(frequency, duration) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            }
+            
+            jumpSound = () => createBeep(800, 0.1);
+            hitSound = () => createBeep(200, 0.3);
+            scoreSound = () => createBeep(1200, 0.15);
+        }
+
+        // Toggle sound
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        // Create heart trail
+        function createHeartTrail() {
+            const heart = document.createElement('div');
+            heart.className = 'heart-trail';
+            heart.textContent = '💕';
+            heart.style.left = (80 + 45) + 'px';
+            heart.style.top = (birdY + 20) + 'px';
+            gameContainer.appendChild(heart);
+            
+            setTimeout(() => {
+                if (heart.parentNode) {
+                    heart.parentNode.removeChild(heart);
+                }
+            }, 1000);
+        }
+
+        // Game functions
+        function startGame() {
+            gameRunning = true;
+            score = 0;
+            currentLevel = 1;
+            lastLevelChange = 0;
+            birdY = 300;
+            birdVelocity = 0;
+            pipes = [];
+            scoreElement.textContent = '0';
+            startScreen.style.display = 'none';
+            gameOverScreen.style.display = 'none';
+            bird.style.top = birdY + 'px';
+            bird.className = '';
+            
+            // Reset background to level 1
+            document.body.style.background = backgroundThemes[0];
+            
+            // Update level indicator
+            updateLevelIndicator();
+            
+            // Initialize audio on first interaction
+            if (!jumpSound) {
+                initAudio();
+            }
+            
+            // Start game loop
+            gameLoop();
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            // Update bird physics
+            birdVelocity += gravity;
+            birdY += birdVelocity;
+            bird.style.top = birdY + 'px';
+
+            // Rotate bird based on velocity (gentler rotation)
+            let rotation = Math.min(Math.max(birdVelocity * 1.5, -25), 60);
+            bird.style.transform = `rotate(${rotation}deg)`;
+
+            // Generate pipes
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < gameContainerWidth - 350) {
+                generatePipe();
+            }
+
+            // Update pipes
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                let pipe = pipes[i];
+                pipe.x -= pipeSpeed;
+                pipe.top.style.left = pipe.x + 'px';
+                pipe.bottom.style.left = pipe.x + 'px';
+
+                // Check collision
+                if (checkCollision(pipe)) {
+                    gameOver();
+                    return;
+                }
+
+                // Update score
+                if (!pipe.passed && pipe.x + pipeWidth < 80) {
+                    score++;
+                    scoreElement.textContent = score;
+                    pipe.passed = true;
+                    
+                    // Check for level up (every 2 points)
+                    if (score % 2 === 0 && score !== lastLevelChange) {
+                        levelUp();
+                    }
+                    
+                    // Play score sound
+                    if (soundEnabled && scoreSound) {
+                        scoreSound();
+                    }
+                }
+
+                // Remove pipes that are off screen
+                if (pipe.x + pipeWidth < -50) {
+                    gameContainer.removeChild(pipe.top);
+                    gameContainer.removeChild(pipe.bottom);
+                    pipes.splice(i, 1);
+                }
+            }
+
+            // Check if bird hits boundaries
+            if (birdY < 0 || birdY > gameContainerHeight - 45) {
+                gameOver();
+                return;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function generatePipe() {
+            let pipeHeight = Math.random() * (gameContainerHeight - pipeGap - 120) + 60;
+            
+            let topPipe = document.createElement('div');
+            topPipe.className = 'pipe top';
+            topPipe.style.height = pipeHeight + 'px';
+            topPipe.style.left = gameContainerWidth + 'px';
+            
+            let bottomPipe = document.createElement('div');
+            bottomPipe.className = 'pipe bottom';
+            bottomPipe.style.height = (gameContainerHeight - pipeHeight - pipeGap) + 'px';
+            bottomPipe.style.left = gameContainerWidth + 'px';
+            
+            gameContainer.appendChild(topPipe);
+            gameContainer.appendChild(bottomPipe);
+            
+            pipes.push({
+                x: gameContainerWidth,
+                top: topPipe,
+                bottom: bottomPipe,
+                passed: false
+            });
+        }
+
+        function checkCollision(pipe) {
+            let birdRect = {
+                left: 80,
+                right: 125,
+                top: birdY,
+                bottom: birdY + 45
+            };
+            
+            let topPipeRect = {
+                left: pipe.x,
+                right: pipe.x + pipeWidth,
+                top: 0,
+                bottom: parseInt(pipe.top.style.height)
+            };
+            
+            let bottomPipeRect = {
+                left: pipe.x,
+                right: pipe.x + pipeWidth,
+                top: parseInt(pipe.top.style.height) + pipeGap,
+                bottom: gameContainerHeight
+            };
+            
+            return (birdRect.left < topPipeRect.right &&
+                    birdRect.right > topPipeRect.left &&
+                    birdRect.top < topPipeRect.bottom) ||
+                   (birdRect.left < bottomPipeRect.right &&
+                    birdRect.right > bottomPipeRect.left &&
+                    birdRect.bottom > bottomPipeRect.top);
+        }
+
+        function jump() {
+            if (!gameRunning) return;
+            
+            birdVelocity = jumpPower;
+            bird.classList.add('flap');
+            setTimeout(() => bird.classList.remove('flap'), 400);
+            
+            // Create heart trail
+            createHeartTrail();
+            
+            // Play jump sound
+            if (soundEnabled && jumpSound) {
+                jumpSound();
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            bird.classList.add('fall');
+            finalScoreElement.textContent = score;
+            
+            // Choose random encouraging message
+            const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+            gameOverMessage.textContent = randomMessage;
+            
+            gameOverScreen.style.display = 'block';
+            
+            // Play hit sound
+            if (soundEnabled && hitSound) {
+                hitSound();
+            }
+        }
+
+        function restartGame() {
+            // Remove all pipes
+            pipes.forEach(pipe => {
+                gameContainer.removeChild(pipe.top);
+                gameContainer.removeChild(pipe.bottom);
+            });
+            pipes = [];
+            
+            startGame();
+        }
+
+        // Level up function
+        function levelUp() {
+            currentLevel = Math.min(Math.floor(score / 2) + 1, backgroundThemes.length);
+            lastLevelChange = score;
+            
+            // Change background color
+            if (currentLevel <= backgroundThemes.length) {
+                document.body.style.background = backgroundThemes[currentLevel - 1];
+            }
+            
+            // Show level indicator
+            updateLevelIndicator();
+            
+            // Show achievement popup
+            showAchievement(`Level ${currentLevel} Unlocked! ${levelNames[currentLevel - 1]}`);
+        }
+
+        // Update level indicator
+        function updateLevelIndicator() {
+            const levelIndicator = document.getElementById('levelIndicator');
+            levelIndicator.textContent = `Level ${currentLevel} ${levelNames[currentLevel - 1].split(' ')[1]}`;
+            levelIndicator.style.opacity = '1';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                levelIndicator.style.opacity = '0';
+            }, 3000);
+        }
+
+        // Show achievement popup
+        function showAchievement(message) {
+            // Remove existing achievement
+            const existingAchievement = document.querySelector('.achievement');
+            if (existingAchievement) {
+                existingAchievement.remove();
+            }
+            
+            const achievement = document.createElement('div');
+            achievement.className = 'achievement';
+            achievement.textContent = message;
+            document.body.appendChild(achievement);
+            
+            // Show animation
+            setTimeout(() => {
+                achievement.classList.add('show');
+            }, 100);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                achievement.classList.remove('show');
+                setTimeout(() => {
+                    if (achievement.parentNode) {
+                        achievement.parentNode.removeChild(achievement);
+                    }
+                }, 500);
+            }, 3000);
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+        });
+
+        document.addEventListener('click', jump);
+        document.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+
+        // Initialize game
+        bird.style.top = birdY + 'px';
+    </script>
+</body>
+</html> 
