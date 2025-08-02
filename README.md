@@ -8,21 +8,11 @@ A beautiful, feminine-themed Flappy Bird game created with love and creativity! 
 
 ## 📸 Screenshots
 
-### 🎮 Gameplay
-![Gameplay Screenshot](screenshots/gameplay.png)
-*Beautiful gameplay with heart trails and sweet pipes*
 
 ### 🌸 Start Screen
 ![Start Screen](screenshots/start-screen.png)
 *Elegant start screen with feminine design*
 
-### 🏆 Achievement Popup
-![Achievement](screenshots/achievement.png)
-*Level up achievement with encouraging message*
-
-### 💕 Different Background Themes
-![Background Themes](screenshots/backgrounds.png)
-*Various beautiful background color schemes*
 
 ## ✨ Features
 
