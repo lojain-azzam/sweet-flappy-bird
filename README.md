@@ -237,4 +237,4 @@ This project is created with love and is open for personal use and learning.
 
 *Made with 💕 and lots of sparkles ✨*
 
-**Enjoy your magical Flappy Bird adventure! 👑🌸** 
+**Enjoy your magical Flappy Bird adventure! 👑🌸**
